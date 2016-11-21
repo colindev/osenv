@@ -5,6 +5,7 @@ load os env to struct
 #### Example
 
 ```golang
+package main
 
 type Env struct {
     Int int `env:"int"`
@@ -13,12 +14,12 @@ type Env struct {
 }
 
 func main(){
-    var ev Env
-    if err := env.LoadTo(&ev); err != nil {
+    var env Env
+    if err := osenv.LoadTo(&env); err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println(ev)
+    fmt.Println(env)
 }
 
 ```
