@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const tagName = "env"
@@ -71,6 +72,15 @@ func setField(v reflect.Value, i int, envName string) error {
 		f.SetBool(n)
 
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if f.Type().Name() == "Duration" {
+			d, err := time.ParseDuration(s)
+			if err != nil {
+				return err
+			}
+			f.SetInt(int64(d))
+			return nil
+		}
+
 		n, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
 			return err

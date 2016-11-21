@@ -3,6 +3,7 @@ package env
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 type X struct {
@@ -19,6 +20,8 @@ type X struct {
 	Float32 float32 `env:"float32"`
 	Float64 float64 `env:"float64"`
 	String  string  `env:"string"`
+
+	Duration time.Duration `env:"duration"`
 
 	Omit []string `env:"-"`
 }
@@ -47,6 +50,7 @@ func Test(t *testing.T) {
 	os.Setenv("float32", "12")
 	os.Setenv("float64", "13")
 	os.Setenv("string", "abc")
+	os.Setenv("duration", "3h")
 
 	// omit y
 
@@ -112,5 +116,10 @@ func Test(t *testing.T) {
 	}
 	if xx.String != "abc" {
 		t.Errorf("string load fail %#v", xx.String)
+	}
+
+	t.Log("duration is ", xx.Duration.String())
+	if xx.Duration != time.Hour*3 {
+		t.Errorf("duration load fail %#v", time.Duration(xx.Duration))
 	}
 }
