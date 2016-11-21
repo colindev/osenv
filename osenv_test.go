@@ -78,7 +78,7 @@ func Test(t *testing.T) {
 	}
 
 	t.Logf("%#v", xx)
-	if xx.Int != int(2) {
+	if xx.Int != int(1) {
 		t.Errorf("int load fail %#v", xx.Int)
 	}
 	if xx.Int8 != int8(3) {

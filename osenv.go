@@ -40,6 +40,7 @@ func LoadTo(v interface{}) error {
 	stv := rv.Type().Elem()
 	rvv := rv.Elem()
 
+NEXT:
 	for i := 0; i < stv.NumField(); i++ {
 		stf := stv.Field(i)
 		tags := stf.Tag.Get(tagName)
@@ -50,7 +51,7 @@ func LoadTo(v interface{}) error {
 			if err := setField(rvv, i, strings.Trim(tag, " ")); err != nil {
 				return err
 			}
-			continue
+			continue NEXT
 		}
 	}
 
