@@ -8,9 +8,16 @@ load os env to struct
 package main
 
 type Env struct {
-    Int int `env:"int"`
+    Path string `env:"PATH"`
+    User string `env:"USER"`
+
+    CustomInt int `env:"custom_int"`
 
     Omit map[string]interface{} `env:"-"`
+}
+
+func init(){
+    os.Setenv("custom_int", "123")
 }
 
 func main(){
