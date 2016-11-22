@@ -44,7 +44,7 @@ NEXT:
 	for i := 0; i < stv.NumField(); i++ {
 		stf := stv.Field(i)
 		tags := stf.Tag.Get(tagName)
-		if tags == "-" {
+		if tags == "-" || tags == "" {
 			continue
 		}
 		for _, tag := range strings.Split(tags, ",") {

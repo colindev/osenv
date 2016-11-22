@@ -8,6 +8,7 @@ import (
 
 type X struct {
 	unexport string
+	NoTag    string
 	Int      int     `env:"int,INT"`
 	Int8     int8    `env:"int8"`
 	Int16    int16   `env:"int16"`
@@ -37,6 +38,9 @@ func Test(t *testing.T) {
 		x  *X
 		xx X
 	)
+
+	os.Setenv("unexport", "unexport")
+	os.Setenv("NoTag", "NoTag")
 	os.Setenv("int", "1")
 	os.Setenv("INT", "2")
 	os.Setenv("int8", "3")
@@ -79,6 +83,12 @@ func Test(t *testing.T) {
 	}
 
 	t.Logf("%#v", xx)
+	if xx.unexport != "" {
+		t.Errorf("unexport can't load %#v", xx.unexport)
+	}
+	if xx.NoTag != "" {
+		t.Errorf("NoTag can't load %#v", xx.NoTag)
+	}
 	if xx.Int != int(1) {
 		t.Errorf("int load fail %#v", xx.Int)
 	}
