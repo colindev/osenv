@@ -61,6 +61,9 @@ NEXT:
 func setField(v reflect.Value, i int, envName string) error {
 
 	f := v.Field(i)
+	if !f.CanSet() {
+		return nil
+	}
 	s := os.Getenv(envName)
 	switch f.Kind() {
 	case reflect.String:

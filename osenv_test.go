@@ -7,19 +7,20 @@ import (
 )
 
 type X struct {
-	Int     int     `env:"int,INT"`
-	Int8    int8    `env:"int8"`
-	Int16   int16   `env:"int16"`
-	Int32   int32   `env:"int32"`
-	Int64   int64   `env:"int64"`
-	Uint    uint    `env:"uint"`
-	Uint8   uint8   `env:"uint8"`
-	Uint16  uint16  `env:"uint16"`
-	Uint32  uint32  `env:"uint32"`
-	Uint64  uint64  `env:"uint64"`
-	Float32 float32 `env:"float32"`
-	Float64 float64 `env:"float64"`
-	String  string  `env:"string"`
+	unexport string
+	Int      int     `env:"int,INT"`
+	Int8     int8    `env:"int8"`
+	Int16    int16   `env:"int16"`
+	Int32    int32   `env:"int32"`
+	Int64    int64   `env:"int64"`
+	Uint     uint    `env:"uint"`
+	Uint8    uint8   `env:"uint8"`
+	Uint16   uint16  `env:"uint16"`
+	Uint32   uint32  `env:"uint32"`
+	Uint64   uint64  `env:"uint64"`
+	Float32  float32 `env:"float32"`
+	Float64  float64 `env:"float64"`
+	String   string  `env:"string"`
 
 	Duration time.Duration `env:"duration"`
 
