@@ -33,15 +33,8 @@ func LoadTo(v interface{}) error {
 
 	return eachStructFields(v, func(rsf reflect.StructField, rv reflect.Value, tags []string) error {
 
-		n := len(tags)
-		if n == 0 {
-			return fmt.Errorf("env: %s too less args", rsf.Name)
-		} else if n > 2 {
-			return fmt.Errorf("env: %s too many args", rsf.Name)
-		}
-
 		arg := os.Getenv(strings.TrimSpace(tags[0]))
-		if arg == "" && n == 2 {
+		if arg == "" && len(tags) == 2 {
 			arg = strings.TrimSpace(tags[1])
 		}
 
@@ -52,6 +45,21 @@ func LoadTo(v interface{}) error {
 		return nil
 	})
 
+}
+
+// ToString return struct to env
+func ToString(v interface{}) string {
+	ret := []string{}
+	eachStructFields(v, func(rsf reflect.StructField, rv reflect.Value, tags []string) error {
+
+		if tags[0] != "" {
+			ret = append(ret, fmt.Sprintf("%s=%v", tags[0], rv.Interface()))
+		}
+
+		return nil
+	})
+
+	return strings.Join(ret, "\n")
 }
 
 func eachStructFields(v interface{}, fn func(reflect.StructField, reflect.Value, []string) error) error {
@@ -68,11 +76,17 @@ func eachStructFields(v interface{}, fn func(reflect.StructField, reflect.Value,
 NEXT:
 	for i := 0; i < stv.NumField(); i++ {
 		stf := stv.Field(i)
-		tags := stf.Tag.Get(tagName)
-		if tags == "-" || tags == "" {
+		tagVal := stf.Tag.Get(tagName)
+		if tagVal == "-" || tagVal == "" {
 			continue
 		}
-		if err := fn(stf, rvv.Field(i), strings.Split(tags, ",")); err != nil {
+		tags := strings.Split(tagVal, ",")
+		n := len(tags)
+		if n == 0 {
+			return fmt.Errorf("env: %s too less args", stf.Name)
+		} else if n > 2 {
+			return fmt.Errorf("env: %s too many args", stf.Name)
+		} else if err := fn(stf, rvv.Field(i), tags); err != nil {
 			return err
 		}
 		continue NEXT

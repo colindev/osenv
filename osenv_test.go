@@ -137,4 +137,24 @@ func Test(t *testing.T) {
 	if xx.Duration != time.Hour*3 {
 		t.Errorf("duration load fail %#v", time.Duration(xx.Duration))
 	}
+
+	raw := ToString(&xx)
+	expectRaw := `int=1
+int8=3
+int16=4
+int32=5
+int64=6
+uint=7
+uint8=8
+uint16=9
+uint32=10
+uint64=11
+float32=12
+float64=13
+string=abc
+bool=true
+duration=3h0m0s`
+	if raw != expectRaw {
+		t.Errorf("want:\n%s\ngot:\n%s", expectRaw, raw)
+	}
 }
