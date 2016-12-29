@@ -9,19 +9,20 @@ import (
 type X struct {
 	unexport string
 	NoTag    string
-	Int      int     `env:"int,INT"`
+	Int      int     `env:"int,-1"`
 	Int8     int8    `env:"int8"`
 	Int16    int16   `env:"int16"`
 	Int32    int32   `env:"int32"`
 	Int64    int64   `env:"int64"`
 	Uint     uint    `env:"uint"`
-	Uint8    uint8   `env:"uint8"`
+	Uint8    uint8   `env:"uint8,8"`
 	Uint16   uint16  `env:"uint16"`
 	Uint32   uint32  `env:"uint32"`
 	Uint64   uint64  `env:"uint64"`
 	Float32  float32 `env:"float32"`
 	Float64  float64 `env:"float64"`
 	String   string  `env:"string"`
+	Bool     bool    `env:"bool,true"`
 
 	Duration time.Duration `env:"duration"`
 
@@ -48,7 +49,7 @@ func Test(t *testing.T) {
 	os.Setenv("int32", "5")
 	os.Setenv("int64", "6")
 	os.Setenv("uint", "7")
-	os.Setenv("uint8", "8")
+	// 不設定 uint8, 測試預設
 	os.Setenv("uint16", "9")
 	os.Setenv("uint32", "10")
 	os.Setenv("uint64", "11")
@@ -127,6 +128,9 @@ func Test(t *testing.T) {
 	}
 	if xx.String != "abc" {
 		t.Errorf("string load fail %#v", xx.String)
+	}
+	if !xx.Bool {
+		t.Errorf("bool load fail %#v", xx.Bool)
 	}
 
 	t.Log("duration is ", xx.Duration.String())

@@ -31,6 +31,31 @@ func (e *invalidValueError) Error() string {
 // LoadTo 將 環境變數載入 struct 內
 func LoadTo(v interface{}) error {
 
+	return eachStructFields(v, func(rsf reflect.StructField, rv reflect.Value, tags []string) error {
+
+		n := len(tags)
+		if n == 0 {
+			return fmt.Errorf("env: %s too less args", rsf.Name)
+		} else if n > 2 {
+			return fmt.Errorf("env: %s too many args", rsf.Name)
+		}
+
+		arg := os.Getenv(strings.TrimSpace(tags[0]))
+		if arg == "" && n == 2 {
+			arg = strings.TrimSpace(tags[1])
+		}
+
+		if err := setField(rv, arg); err != nil {
+			return fmt.Errorf("env: set field(%s, %s) %v", rsf.Name, arg, err)
+		}
+
+		return nil
+	})
+
+}
+
+func eachStructFields(v interface{}, fn func(reflect.StructField, reflect.Value, []string) error) error {
+
 	rv := reflect.ValueOf(v)
 
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
@@ -47,63 +72,59 @@ NEXT:
 		if tags == "-" || tags == "" {
 			continue
 		}
-		for _, tag := range strings.Split(tags, ",") {
-			if err := setField(rvv, i, strings.Trim(tag, " ")); err != nil {
-				return err
-			}
-			continue NEXT
+		if err := fn(stf, rvv.Field(i), strings.Split(tags, ",")); err != nil {
+			return err
 		}
+		continue NEXT
 	}
 
 	return nil
 }
 
-func setField(v reflect.Value, i int, envName string) error {
+func setField(v reflect.Value, envArg string) error {
 
-	f := v.Field(i)
-	if !f.CanSet() {
+	if !v.CanSet() {
 		return nil
 	}
-	s := os.Getenv(envName)
-	switch f.Kind() {
+	switch v.Kind() {
 	case reflect.String:
-		f.SetString(s)
+		v.SetString(envArg)
 	case reflect.Bool:
-		n, err := strconv.ParseBool(s)
+		n, err := strconv.ParseBool(envArg)
 		if err != nil {
 			return err
 		}
-		f.SetBool(n)
+		v.SetBool(n)
 
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		if f.Type().Name() == "Duration" {
-			d, err := time.ParseDuration(s)
+		if v.Type().Name() == "Duration" {
+			d, err := time.ParseDuration(envArg)
 			if err != nil {
 				return err
 			}
-			f.SetInt(int64(d))
+			v.SetInt(int64(d))
 			return nil
 		}
 
-		n, err := strconv.ParseInt(s, 10, 64)
+		n, err := strconv.ParseInt(envArg, 10, 64)
 		if err != nil {
 			return err
 		}
-		f.SetInt(n)
+		v.SetInt(n)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		n, err := strconv.ParseUint(s, 10, 64)
+		n, err := strconv.ParseUint(envArg, 10, 64)
 		if err != nil {
 			return err
 		}
-		f.SetUint(n)
+		v.SetUint(n)
 	case reflect.Float32, reflect.Float64:
-		n, err := strconv.ParseFloat(s, 64)
+		n, err := strconv.ParseFloat(envArg, 64)
 		if err != nil {
 			return err
 		}
-		f.SetFloat(n)
+		v.SetFloat(n)
 	default:
-		return fmt.Errorf("Invalid type %s", f.Kind().String())
+		return fmt.Errorf("Invalid type %s", v.Kind().String())
 	}
 
 	return nil
