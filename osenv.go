@@ -73,7 +73,6 @@ func eachStructFields(v interface{}, fn func(reflect.StructField, reflect.Value,
 	stv := rv.Type().Elem()
 	rvv := rv.Elem()
 
-NEXT:
 	for i := 0; i < stv.NumField(); i++ {
 		stf := stv.Field(i)
 		tagVal := stf.Tag.Get(tagName)
@@ -89,7 +88,6 @@ NEXT:
 		} else if err := fn(stf, rvv.Field(i), tags); err != nil {
 			return err
 		}
-		continue NEXT
 	}
 
 	return nil
