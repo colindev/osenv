@@ -11,9 +11,7 @@ type Env struct {
     Path string `env:"PATH"`
     User string `env:"USER"`
     DefaultValue bool `env:"DV,true"`
-
     CustomInt int `env:"custom_int"`
-
     Omit map[string]interface{} `env:"-"`
 }
 
@@ -29,5 +27,4 @@ func main(){
 
     fmt.Println(env)
 }
-
 ```
