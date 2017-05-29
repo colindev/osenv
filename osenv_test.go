@@ -28,6 +28,7 @@ type X struct {
 	String   string        `env:"string"`
 	Bool     bool          `env:"bool,true"`
 	Duration time.Duration `env:"duration"`
+	Time     time.Time     `env:"time,2012-11-01T22:08:41+00:00"`
 	Omit     []string      `env:"-"`
 	Slice1   []string      `env:"slice1,a,b,c"`
 	Slice2   []int         `env:"slice2,1,2,3"`
@@ -149,6 +150,7 @@ float64=13
 string=abc
 bool=true
 duration=3h0m0s
+time=2012-11-01 22:08:41 +0000 +0000
 slice1=[a b c]
 slice2=[1 2 3]
 sub=-3`

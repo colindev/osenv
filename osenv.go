@@ -139,6 +139,15 @@ func setField(rv2 reflect.Value, envArg []string) error {
 		default:
 			return fmt.Errorf("Invalid slice type %s", rv2.Type().String())
 		}
+	case reflect.Struct:
+		if rv2.Type().Name() == "Time" {
+			t, err := time.Parse(time.RFC3339, envArg[0]) // "2012-11-01T22:08:41+00:00"
+			if err != nil {
+				return err
+			}
+			rv2.Set(reflect.ValueOf(t)) //time.Now()
+		}
+		return nil
 	default:
 		return fmt.Errorf("Invalid type %s", rv2.Kind().String())
 	}
