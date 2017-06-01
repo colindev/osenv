@@ -6,31 +6,33 @@ import (
 	"time"
 )
 
+type X2 struct {
+	Sub int `env:"sub,-2"`
+}
+
 type X struct {
 	unexport string
 	NoTag    string
-	Int      int     `env:"int,-1"`
-	Int8     int8    `env:"int8"`
-	Int16    int16   `env:"int16"`
-	Int32    int32   `env:"int32"`
-	Int64    int64   `env:"int64"`
-	Uint     uint    `env:"uint"`
-	Uint8    uint8   `env:"uint8,8"`
-	Uint16   uint16  `env:"uint16"`
-	Uint32   uint32  `env:"uint32"`
-	Uint64   uint64  `env:"uint64"`
-	Float32  float32 `env:"float32"`
-	Float64  float64 `env:"float64"`
-	String   string  `env:"string"`
-	Bool     bool    `env:"bool,true"`
-
+	Int      int           `env:"int,-1"`
+	Int8     int8          `env:"int8"`
+	Int16    int16         `env:"int16"`
+	Int32    int32         `env:"int32"`
+	Int64    int64         `env:"int64"`
+	Uint     uint          `env:"uint"`
+	Uint8    uint8         `env:"uint8,8"`
+	Uint16   uint16        `env:"uint16"`
+	Uint32   uint32        `env:"uint32"`
+	Uint64   uint64        `env:"uint64"`
+	Float32  float32       `env:"float32"`
+	Float64  float64       `env:"float64"`
+	String   string        `env:"string"`
+	Bool     bool          `env:"bool,true"`
 	Duration time.Duration `env:"duration"`
-
-	Omit []string `env:"-"`
-}
-
-type Error struct {
-	Slice []string `env:"xxx"`
+	Time     time.Time     `env:"time,2012-11-01T22:08:41+00:00"`
+	Omit     []string      `env:"-"`
+	Slice1   []string      `env:"slice1,a,b,c"`
+	Slice2   []int         `env:"slice2,1,2,3"`
+	X        X2
 }
 
 func Test(t *testing.T) {
@@ -57,10 +59,11 @@ func Test(t *testing.T) {
 	os.Setenv("float64", "13")
 	os.Setenv("string", "abc")
 	os.Setenv("duration", "3h")
+	os.Setenv("slice1", "a,b,c")
+	os.Setenv("slice2", "1,2,3")
+	os.Setenv("sub", "-3")
 
-	// omit y
-
-	if err := LoadTo(struct{}{}); err == nil {
+	if err := LoadTo(struct{}{}); err != nil {
 		t.Error("判斷錯誤 struct value")
 	}
 	if err := LoadTo(123); err == nil {
@@ -72,17 +75,12 @@ func Test(t *testing.T) {
 	if err := LoadTo(x); err == nil {
 		t.Error("判斷錯誤 (*X)(nil)")
 	}
-	if err := LoadTo(&Error{}); err == nil {
-		t.Error("結構內有不支援型別slice 不應該沒檢查到")
-	}
-
-	//fmt.Println(LoadTo(&[]string{}))
-	//fmt.Println(LoadTo(&map[string]interface{}{}))
-
 	if err := LoadTo(&xx); err != nil {
 		t.Error(err)
 	}
-
+	if err := LoadTo(xx); err != nil {
+		t.Error(err)
+	}
 	t.Logf("%#v", xx)
 	if xx.unexport != "" {
 		t.Errorf("unexport can't load %#v", xx.unexport)
@@ -132,12 +130,10 @@ func Test(t *testing.T) {
 	if !xx.Bool {
 		t.Errorf("bool load fail %#v", xx.Bool)
 	}
-
 	t.Log("duration is ", xx.Duration.String())
 	if xx.Duration != time.Hour*3 {
 		t.Errorf("duration load fail %#v", time.Duration(xx.Duration))
 	}
-
 	raw := ToString(&xx)
 	expectRaw := `int=1
 int8=3
@@ -153,7 +149,11 @@ float32=12
 float64=13
 string=abc
 bool=true
-duration=3h0m0s`
+duration=3h0m0s
+time=2012-11-01 22:08:41 +0000 +0000
+slice1=[a b c]
+slice2=[1 2 3]
+sub=-3`
 	if raw != expectRaw {
 		t.Errorf("want:\n%s\ngot:\n%s", expectRaw, raw)
 	}
