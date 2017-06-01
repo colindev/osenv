@@ -17,7 +17,16 @@ func ToString(v interface{}) string {
 	rv := reflect.ValueOf(v)
 	eachStructFields(rv, func(field reflect.StructField, rv2 reflect.Value, tags []string) error {
 		if tags[0] != "" {
-			ret = append(ret, fmt.Sprintf("%s=%v", tags[0], rv2.Interface()))
+
+			var value string
+
+			switch rv2.Type().Name() {
+			case "Time":
+				value = rv2.Interface().(time.Time).Format(time.RFC3339)
+			default:
+				value = fmt.Sprintf("%v", rv2.Interface())
+			}
+			ret = append(ret, fmt.Sprintf("%s=%s", tags[0], value))
 		}
 		return nil
 	})
@@ -56,7 +65,6 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 		return &invalidValueError{reflect.TypeOf(rv)}
 	}
 
-
 	for i := 0; i < rvt.NumField(); i++ {
 		fieldType := rvt.Field(i)
 		fieldValue := rv2.Field(i)
@@ -67,7 +75,7 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 			}
 		}
 
-    tagVal := fieldType.Tag.Get(tagName)
+		tagVal := fieldType.Tag.Get(tagName)
 
 		if tagVal == "-" || tagVal == "" {
 			continue

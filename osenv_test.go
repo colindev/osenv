@@ -1,6 +1,7 @@
 package osenv
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -134,6 +135,11 @@ func Test(t *testing.T) {
 	if xx.Duration != time.Hour*3 {
 		t.Errorf("duration load fail %#v", time.Duration(xx.Duration))
 	}
+
+	t.Log(xx.Time.String(), "// time.String()")
+	t.Log(xx.Time.Format(time.RFC3339), "// time.Format(RFC3339)")
+	t.Log(fmt.Sprintf("%v", xx.Time), `// fmt.Sprintf("%v", Time)`)
+
 	raw := ToString(&xx)
 	expectRaw := `int=1
 int8=3
@@ -154,6 +160,7 @@ time=2012-11-01 22:08:41 +0000 +0000
 slice1=[a b c]
 slice2=[1 2 3]
 sub=-3`
+	t.Log(raw)
 	if raw != expectRaw {
 		t.Errorf("want:\n%s\ngot:\n%s", expectRaw, raw)
 	}
