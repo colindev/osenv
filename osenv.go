@@ -22,7 +22,8 @@ func ToString(v interface{}) string {
 
 			switch rv2.Type().Name() {
 			case "Time":
-				value = rv2.Interface().(time.Time).Format(time.RFC3339)
+				// 有點多餘,但先保留著
+				value = rv2.Interface().(time.Time).String()
 			default:
 				value = fmt.Sprintf("%v", rv2.Interface())
 			}

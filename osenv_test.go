@@ -141,7 +141,8 @@ func Test(t *testing.T) {
 	t.Log(fmt.Sprintf("%v", xx.Time), `// fmt.Sprintf("%v", Time)`)
 
 	raw := ToString(&xx)
-	expectRaw := `int=1
+	expectTime, _ := time.Parse(time.RFC3339, "2012-11-01T22:08:41+00:00")
+	expectRaw := fmt.Sprintf(`int=1
 int8=3
 int16=4
 int32=5
@@ -156,10 +157,10 @@ float64=13
 string=abc
 bool=true
 duration=3h0m0s
-time=2012-11-01 22:08:41 +0000 +0000
+time=%s
 slice1=[a b c]
 slice2=[1 2 3]
-sub=-3`
+sub=-3`, expectTime.String())
 	t.Log(raw)
 	if raw != expectRaw {
 		t.Errorf("want:\n%s\ngot:\n%s", expectRaw, raw)
