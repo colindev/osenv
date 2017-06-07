@@ -2,6 +2,8 @@
 
 load os env to struct
 
+[![Build Status](https://travis-ci.org/colindev/osenv.svg?branch=master)](https://travis-ci.org/colindev/osenv)
+
 #### Example
 
 ```golang
