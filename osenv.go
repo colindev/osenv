@@ -56,7 +56,6 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 		return &invalidValueError{reflect.TypeOf(rv)}
 	}
 
-
 	for i := 0; i < rvt.NumField(); i++ {
 		fieldType := rvt.Field(i)
 		fieldValue := rv2.Field(i)
@@ -67,7 +66,7 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 			}
 		}
 
-    tagVal := fieldType.Tag.Get(tagName)
+		tagVal := fieldType.Tag.Get(tagName)
 
 		if tagVal == "-" || tagVal == "" {
 			continue
