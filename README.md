@@ -2,7 +2,7 @@
 
 load os env to struct
 
-[![PayPal donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&hosted_button_id=YL3P2TXPF2GKE&item_name=node%2ddota2%2dspectator&currency_code=USD)
+[![PayPal donate button](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YL3P2TXPF2GKE)
 [![Build Status](https://travis-ci.org/colindev/osenv.svg?branch=master)](https://travis-ci.org/colindev/osenv)
 [![GoDoc](https://godoc.org/github.com/colindev/osenv?status.svg)](https://godoc.org/github.com/colindev/osenv)
 
