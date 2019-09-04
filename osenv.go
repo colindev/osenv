@@ -18,9 +18,11 @@ func Help(v interface{}, out io.Writer) {
 		out = os.Stdout
 	}
 
-	s := fmt.Sprintf(" %T\n", v)
+	rvo := reflect.ValueOf(v)
 
-	eachStructFields(reflect.ValueOf(v), func(field reflect.StructField, rv reflect.Value, tags []string) error {
+	s := fmt.Sprintf(" %s\n", rvo.Type().Name())
+
+	eachStructFields(rvo, func(field reflect.StructField, rv reflect.Value, tags []string) error {
 
 		s += fmt.Sprintf("  %s: %s\n", tags[0], rv.Type().Name())
 

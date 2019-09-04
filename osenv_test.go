@@ -36,6 +36,12 @@ type X struct {
 	X        X2
 }
 
+func TestHelp(t *testing.T) {
+
+	// TODO test output
+	Help(X{}, os.Stdout)
+}
+
 func Test(t *testing.T) {
 
 	var (
