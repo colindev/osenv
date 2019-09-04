@@ -91,6 +91,9 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 		return &invalidValueError{reflect.TypeOf(rv)}
 	}
 
+	if Debug {
+		fmt.Println("reflect value type NumField:", rvt.NumField())
+	}
 	for i := 0; i < rvt.NumField(); i++ {
 		fieldType := rvt.Field(i)
 		fieldValue := rv2.Field(i)
@@ -127,6 +130,11 @@ func setField(rv2 reflect.Value, envArg []string) error {
 	case reflect.String:
 		rv2.SetString(envArg[0])
 	case reflect.Bool:
+
+		if envArg[0] == "" {
+			rv2.SetBool(false)
+			return nil
+		}
 		n, err := strconv.ParseBool(envArg[0])
 		if err != nil {
 			return err
