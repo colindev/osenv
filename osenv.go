@@ -63,6 +63,9 @@ func LoadTo(v interface{}) error {
 		if arg[0] == "" && len(tags) > 1 {
 			arg = tags[1:]
 		}
+		if Debug {
+			fmt.Println(">", field.Name, rv.CanSet(), rv.Kind(), rv.Type().Name(), arg)
+		}
 		if err := setField(rv, arg); err != nil {
 			return fmt.Errorf("env: set field(%s, %s) %v", field.Name, arg, err)
 		}
@@ -73,10 +76,6 @@ func LoadTo(v interface{}) error {
 func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Value, []string) error) error {
 	var rvt reflect.Type
 	var rv2 reflect.Value
-
-	if Debug {
-		fmt.Println(">", rv.Kind(), rv.Type())
-	}
 
 	switch rv.Kind() {
 	case reflect.Ptr:
@@ -120,10 +119,6 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 }
 
 func setField(rv2 reflect.Value, envArg []string) error {
-
-	if Debug {
-		fmt.Println(">>", rv2.CanSet(), rv2.Kind(), rv2.Type().Name(), envArg)
-	}
 
 	if !rv2.CanSet() {
 		return nil
