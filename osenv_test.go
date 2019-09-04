@@ -85,9 +85,13 @@ func Test(t *testing.T) {
 	if err := LoadTo(&xx); err != nil {
 		t.Error(err)
 	}
+
+	Debug = true
 	if err := LoadTo(xx); err != nil {
 		t.Error(err)
 	}
+	Debug = false
+
 	t.Logf("%#v", xx)
 	if xx.unexport != "" {
 		t.Errorf("unexport can't load %#v", xx.unexport)

@@ -12,6 +12,8 @@ import (
 
 const tagName = "env"
 
+var Debug bool
+
 func Help(v interface{}, out io.Writer) {
 
 	if out == nil {
@@ -71,6 +73,11 @@ func LoadTo(v interface{}) error {
 func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Value, []string) error) error {
 	var rvt reflect.Type
 	var rv2 reflect.Value
+
+	if Debug {
+		fmt.Println(">", rv.Kind(), rv.Type())
+	}
+
 	switch rv.Kind() {
 	case reflect.Ptr:
 		if rv.IsNil() {
@@ -113,6 +120,11 @@ func eachStructFields(rv reflect.Value, fn func(reflect.StructField, reflect.Val
 }
 
 func setField(rv2 reflect.Value, envArg []string) error {
+
+	if Debug {
+		fmt.Println(">>", rv2.CanSet(), rv2.Kind(), rv2.Type().Name(), envArg)
+	}
+
 	if !rv2.CanSet() {
 		return nil
 	}
