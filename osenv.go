@@ -2,6 +2,7 @@ package osenv
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"reflect"
 	"strconv"
@@ -11,21 +12,38 @@ import (
 
 const tagName = "env"
 
+func Help(v interface{}, out io.Writer) {
+
+	if out == nil {
+		out = os.Stdout
+	}
+
+	s := fmt.Sprintf(" %T\n", v)
+
+	eachStructFields(reflect.ValueOf(v), func(field reflect.StructField, rv reflect.Value, tags []string) error {
+
+		s += fmt.Sprintf("  %s: %s\n", tags[0], rv.Type().Name())
+
+		return nil
+	})
+
+	fmt.Fprint(out, s)
+}
+
 // ToString from interface
 func ToString(v interface{}) string {
 	ret := []string{}
-	rv := reflect.ValueOf(v)
-	eachStructFields(rv, func(field reflect.StructField, rv2 reflect.Value, tags []string) error {
+	eachStructFields(reflect.ValueOf(v), func(field reflect.StructField, rv reflect.Value, tags []string) error {
 		if tags[0] != "" {
 
 			var value string
 
-			switch rv2.Type().Name() {
+			switch rv.Type().Name() {
 			case "Time":
 				// 有點多餘,但先保留著
-				value = rv2.Interface().(time.Time).String()
+				value = rv.Interface().(time.Time).String()
 			default:
-				value = fmt.Sprintf("%v", rv2.Interface())
+				value = fmt.Sprintf("%v", rv.Interface())
 			}
 			ret = append(ret, fmt.Sprintf("%s=%s", tags[0], value))
 		}
@@ -36,13 +54,12 @@ func ToString(v interface{}) string {
 
 // LoadTo 將 環境變數載入 struct 內
 func LoadTo(v interface{}) error {
-	rv := reflect.ValueOf(v)
-	return eachStructFields(rv, func(field reflect.StructField, rv2 reflect.Value, tags []string) error {
+	return eachStructFields(reflect.ValueOf(v), func(field reflect.StructField, rv reflect.Value, tags []string) error {
 		arg := strings.Split(os.Getenv(strings.TrimSpace(tags[0])), ",")
 		if arg[0] == "" && len(tags) > 1 {
 			arg = tags[1:]
 		}
-		if err := setField(rv2, arg); err != nil {
+		if err := setField(rv, arg); err != nil {
 			return fmt.Errorf("env: set field(%s, %s) %v", field.Name, arg, err)
 		}
 		return nil
