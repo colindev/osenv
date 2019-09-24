@@ -65,7 +65,7 @@ func Test(t *testing.T) {
 	os.Setenv("float32", "12")
 	os.Setenv("float64", "13")
 	os.Setenv("string", "abc")
-	os.Setenv("duration", "3h")
+	os.Setenv("duration", "72h")
 	os.Setenv("slice1", "a,b,c")
 	os.Setenv("slice2", "1,2,3")
 	os.Setenv("sub", "-3")
@@ -142,7 +142,7 @@ func Test(t *testing.T) {
 		t.Errorf("bool load fail %#v", xx.Bool)
 	}
 	t.Log("duration is ", xx.Duration.String())
-	if xx.Duration != time.Hour*3 {
+	if xx.Duration != time.Hour*3*24 {
 		t.Errorf("duration load fail %#v", time.Duration(xx.Duration))
 	}
 
@@ -166,7 +166,7 @@ float32=12
 float64=13
 string=abc
 bool=true
-duration=3h0m0s
+duration=72h0m0s
 time=%s
 slice1=[a b c]
 slice2=[1 2 3]
